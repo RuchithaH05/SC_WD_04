@@ -32,5 +32,25 @@ A modern web browser such as Chrome, Firefox, Edge, or Safari.
 ### Installation
 
 1. Clone the repository:
+2. 
+2. Open the `index.html` file in your preferred browser.
+
+---
+
+## Usage
+
+- Add tasks using the input field and press enter or click the add button.
+- Tasks can be marked complete by clicking the checkbox.
+- To edit or delete a task, use the corresponding buttons next to each task.
+- Your tasks will be saved automatically and persist even after browser reload.
+
+
+
+---
+
+## Acknowledgments
+
+Inspired by learning projects and Skill Craft Technology internship experience.
+
 
 
