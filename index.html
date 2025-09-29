@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Modern To-Do App</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 flex items-center justify-center min-h-screen">
+
+  <div class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-8">
+    <h1 class="text-4xl font-bold text-center text-gray-800 mb-6">📝 To-Do App</h1>
+
+    <!-- Task Input -->
+    <div class="flex flex-col md:flex-row gap-3 mb-6">
+      <input type="text" id="taskInput" placeholder="Enter new task"
+        class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <input type="datetime-local" id="taskDate" class="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-400">
+      <button id="addTaskBtn"
+        class="bg-blue-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-600 transition">Add</button>
+    </div>
+
+    <!-- Task List -->
+    <ul id="taskList" class="space-y-3"></ul>
+  </div>
+
+  <script>
+    const taskInput = document.getElementById("taskInput");
+    const taskDate = document.getElementById("taskDate");
+    const addTaskBtn = document.getElementById("addTaskBtn");
+    const taskList = document.getElementById("taskList");
+
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+    function saveTasks() {
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+
+    function renderTasks() {
+      taskList.innerHTML = "";
+
+      tasks.forEach((task, index) => {
+        const li = document.createElement("li");
+        li.className = "bg-gray-50 p-4 rounded-xl flex justify-between items-center shadow-sm border border-gray-200";
+
+        const taskText = document.createElement("div");
+        taskText.className = "flex flex-col";
+        taskText.innerHTML = `
+          <span class="${task.completed ? 'line-through text-gray-500' : 'text-gray-800 font-medium'}">${task.text}</span>
+          <small class="text-gray-500 text-sm">${task.date !== "No date" ? task.date : ""}</small>
+        `;
+
+        const btnGroup = document.createElement("div");
+        btnGroup.className = "flex gap-2";
+
+        const completeBtn = document.createElement("button");
+        completeBtn.textContent = task.completed ? "↩" : "✔";
+        completeBtn.className = `px-3 py-1 rounded-lg text-white ${task.completed ? 'bg-gray-500 hover:bg-gray-600' : 'bg-green-500 hover:bg-green-600'}`;
+        completeBtn.onclick = () => {
+          tasks[index].completed = !tasks[index].completed;
+          saveTasks();
+          renderTasks();
+        };
+
+        const editBtn = document.createElement("button");
+        editBtn.textContent = "✏";
+        editBtn.className = "px-3 py-1 bg-yellow-500 hover:bg-yellow-600 rounded-lg text-white";
+        editBtn.onclick = () => {
+          const newText = prompt("Edit task:", tasks[index].text);
+          if (newText !== null && newText.trim() !== "") {
+            tasks[index].text = newText;
+            saveTasks();
+            renderTasks();
+          }
+        };
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "🗑";
+        deleteBtn.className = "px-3 py-1 bg-red-500 hover:bg-red-600 rounded-lg text-white";
+        deleteBtn.onclick = () => {
+          tasks.splice(index, 1);
+          saveTasks();
+          renderTasks();
+        };
+
+        btnGroup.appendChild(completeBtn);
+        btnGroup.appendChild(editBtn);
+        btnGroup.appendChild(deleteBtn);
+
+        li.appendChild(taskText);
+        li.appendChild(btnGroup);
+
+        taskList.appendChild(li);
+      });
+    }
+
+    addTaskBtn.addEventListener("click", () => {
+      const text = taskInput.value.trim();
+      const date = taskDate.value;
+      if (text) {
+        tasks.push({ text, date: date || "No date", completed: false });
+        taskInput.value = "";
+        taskDate.value = "";
+        saveTasks();
+        renderTasks();
+      }
+    });
+
+    renderTasks();
+  </script>
+
+</body>
+</html>
